@@ -2,9 +2,7 @@ import numpy as np
 import random
 import streamlit as st
 
-# Problem parameters
-max_seats = 20
-max_days = 50
+
 
 # Q-learning parameters
 alpha = 0.1           # Learning rate
@@ -12,8 +10,6 @@ gamma = 0.9           # Discount factor
 epsilon = 0.1         # Exploration rate
 episodes = 10000      # Number of episodes
 
-# Initialize Q-table
-Q = np.zeros((max_seats + 1, max_days + 1, 2))  # 2 actions (prices)
 
 # Function to take an action and observe the next state and reward
 def step(state, action, prices, probs):
@@ -35,7 +31,7 @@ def step(state, action, prices, probs):
     return next_state, reward, done
 
 # Q-learning algorithm
-def run_q_learning(prices, probs):
+def run_q_learning(prices, probs,max_seats,max_days):
     Q = np.zeros((max_seats + 1, max_days + 1, len(prices)))  # Reinitialize Q-table
     for episode in range(episodes):
         state = (max_seats, max_days)
@@ -75,13 +71,15 @@ def main():
     price2 = st.sidebar.number_input("Price 2", value=1, min_value=0)
     prob1 = st.sidebar.slider("Probability for Price 1", 0.0, 1.0, 0.1)
     prob2 = st.sidebar.slider("Probability for Price 2", 0.0, 1.0, 0.8)
+    max_seats = st.sidebar.number_input("Max Seats", value=40, min_value=0)
+    max_days = st.sidebar.number_input("Max days", value=20, min_value=0)
 
     prices = [price1, price2]
     probs = [prob1, prob2]
 
     if st.button("Run Q-learning"):
         st.write("Running Q-learning...")
-        Q = run_q_learning(prices, probs)
+        Q = run_q_learning(prices, probs,max_seats,max_days)
         st.write("Q-learning completed!")
 
         # Test the learned policy
